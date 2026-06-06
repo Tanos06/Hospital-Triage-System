@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Hospital-Triage-System" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Hospital-Triage-System" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Hospital-Triage-System" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="C:/Users/gaeta/Desktop/Laboratorio di programmazione/curl-8.20.0_3-win64-mingw/include" />
+			<Add directory="C:/Users/gaeta/Desktop/Laboratorio di programmazione/raylib-5.0_win64_mingw-w64/include" />
+		</Compiler>
+		<Linker>
+			<Add option="-lcurl" />
+			<Add option="-lraylib" />
+			<Add option="-lopengl32" />
+			<Add option="-lgdi32" />
+			<Add option="-lwinmm" />
+			<Add option="-lws2_32" />
+			<Add library="C:/Users/gaeta/Desktop/Laboratorio di programmazione/curl-8.20.0_3-win64-mingw/lib/libcurl.a" />
+			<Add library="C:/Users/gaeta/Desktop/Laboratorio di programmazione/raylib-5.0_win64_mingw-w64/lib/libraylib.a" />
+			<Add directory="C:/Users/gaeta/Desktop/Laboratorio di programmazione/curl-8.20.0_3-win64-mingw/lib" />
+			<Add directory="C:/Users/gaeta/Desktop/Laboratorio di programmazione/raylib-5.0_win64_mingw-w64/lib" />
+		</Linker>
+		<Unit filename="chat.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="chat.h" />
+		<Unit filename="departments.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="departments.h" />
+		<Unit filename="mail.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="mail.h" />
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="security.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="security.h" />
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

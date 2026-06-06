@@ -1,0 +1,112 @@
+# depslib dependency file v1.0
+1780694118 source:c:\users\gaeta\desktop\laboratorio di programmazione\hospital-triage-system\chat.c
+	<stdio.h>
+	<string.h>
+	<winsock2.h>
+	"chat.h"
+	"security.h"
+
+1780694509 c:\users\gaeta\desktop\laboratorio di programmazione\hospital-triage-system\chat.h
+	<stdbool.h>
+
+1780694054 source:c:\users\gaeta\desktop\laboratorio di programmazione\hospital-triage-system\mail.c
+	<stdio.h>
+	<stdlib.h>
+	<curl/curl.h>
+
+1779403129 c:\users\gaeta\desktop\laboratorio di programmazione\curl-8.20.0_3-win64-mingw\include\curl\curl.h
+	"curlver.h"
+	"system.h"
+	<stdio.h>
+	<limits.h>
+	<sys/param.h>
+	<sys/types.h>
+	<time.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<sys/select.h>
+	<sys/socket.h>
+	<sys/time.h>
+	"easy.h"
+	"multi.h"
+	"urlapi.h"
+	"options.h"
+	"header.h"
+	"websockets.h"
+	"mprintf.h"
+	"typecheck-gcc.h"
+
+1779403129 c:\users\gaeta\desktop\laboratorio di programmazione\curl-8.20.0_3-win64-mingw\include\curl\curlver.h
+
+1779403129 c:\users\gaeta\desktop\laboratorio di programmazione\curl-8.20.0_3-win64-mingw\include\curl\system.h
+	<ConditionalMacros.h>
+	<inttypes.h>
+	<inttypes.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<sys/poll.h>
+
+1779403129 c:\users\gaeta\desktop\laboratorio di programmazione\curl-8.20.0_3-win64-mingw\include\curl\easy.h
+
+1779403129 c:\users\gaeta\desktop\laboratorio di programmazione\curl-8.20.0_3-win64-mingw\include\curl\multi.h
+	"curl.h"
+
+1779403129 c:\users\gaeta\desktop\laboratorio di programmazione\curl-8.20.0_3-win64-mingw\include\curl\urlapi.h
+	"curl.h"
+
+1779403129 c:\users\gaeta\desktop\laboratorio di programmazione\curl-8.20.0_3-win64-mingw\include\curl\options.h
+
+1779403129 c:\users\gaeta\desktop\laboratorio di programmazione\curl-8.20.0_3-win64-mingw\include\curl\header.h
+
+1779403129 c:\users\gaeta\desktop\laboratorio di programmazione\curl-8.20.0_3-win64-mingw\include\curl\websockets.h
+
+1779403129 c:\users\gaeta\desktop\laboratorio di programmazione\curl-8.20.0_3-win64-mingw\include\curl\mprintf.h
+	<stdarg.h>
+	<stdio.h>
+	"curl.h"
+
+1779403129 c:\users\gaeta\desktop\laboratorio di programmazione\curl-8.20.0_3-win64-mingw\include\curl\typecheck-gcc.h
+
+1780684084 source:c:\users\gaeta\desktop\laboratorio di programmazione\hospital-triage-system\security.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<ctype.h>
+
+1780693796 source:c:\users\gaeta\desktop\laboratorio di programmazione\hospital-triage-system\departments.c
+	<stdio.h>
+	<string.h>
+	"departments.h"
+
+1780694054 c:\users\gaeta\desktop\laboratorio di programmazione\hospital-triage-system\departments.h
+
+1780694587 source:c:\users\gaeta\desktop\laboratorio di programmazione\hospital-triage-system\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<process.h>
+	<stdbool.h>
+	<time.h>
+	"chat.h"
+	"security.h"
+	"departments.h"
+	"mail.h"
+	"raylib.h"
+	"raygui.h"
+
+1780684075 c:\users\gaeta\desktop\laboratorio di programmazione\hospital-triage-system\security.h
+
+1780335903 c:\users\gaeta\desktop\laboratorio di programmazione\raylib-5.0_win64_mingw-w64\include\raylib.h
+	<stdarg.h>
+	<stdbool.h>
+
+1780337848 c:\users\gaeta\desktop\laboratorio di programmazione\raylib-5.0_win64_mingw-w64\include\raygui.h
+	"raylib.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdarg.h>
+	<math.h>
+
+1779403957 c:\users\gaeta\desktop\laboratorio di programmazione\hospital-triage-system\mail.h
+
