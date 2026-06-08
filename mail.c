@@ -5,22 +5,25 @@
 
 #define EMAIL "gaetanobona84@gmail.com"
 #define PASSWORD "mxoyrllyqnprpkkt"
+#define SUBJECT "Referto Dimissioni"
 int send_discharge_email(const char * file_name,
   const char * patient_email) {
+    char *payload_text[512];
+    sprintf(payload_text,"From : %s\r\n" "To: %s\r\n" "Subject: %s\r\n",EMAIL,patient_email,SUBJECT);
     CURL * curl = curl_easy_init();
     if (curl) {
       char credential[256];
       struct curl_slist * recipients=NULL;
+      struct curl_slist * headers=NULL;
       recipients = curl_slist_append(NULL, EMAIL);
       recipients = curl_slist_append(recipients, patient_email);
-      recipients = curl_slist_append(recipients, "Content-Type: text/plain");
+      headers=curl_slist_append(NULL,"Subject: Referto Dimissioni");
+      curl_easy_setopt(curl,CURLOPT_HTTPHEADER, headers);
       sprintf(credential, "%s:%s", EMAIL, PASSWORD);
       curl_easy_setopt(curl, CURLOPT_URL, "smtps://smtp.gmail.com:465");
       curl_easy_setopt(curl, CURLOPT_USERPWD, credential);
       curl_easy_setopt(curl, CURLOPT_MAIL_FROM, EMAIL);
       curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
-      struct curl_slist *header = curl_slist_append(NULL, "Referto dimissioni");
-      curl_easy_setopt(curl, CURLOPT_HTTPHEADER, header);
       curl_mime * mime = curl_mime_init(curl);
       curl_mimepart * part = curl_mime_addpart(mime);
       curl_mime_data(part, "Salve, questo in allegato e' il suo referto di dimissioni", CURL_ZERO_TERMINATED);
@@ -38,8 +41,12 @@ int send_discharge_email(const char * file_name,
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, & response_code);
 
         if (response_code != 250) {
-          fprintf(stderr, "Mailer response code %ld error\n", response_code);
-          return 0;
+            fprintf(stderr, "Mailer response code %ld error\n", response_code);
+            curl_slist_free_all(recipients);
+            curl_slist_free_all(headers);
+            curl_mime_free(mime);
+            curl_easy_cleanup(curl);
+            return 0;
         } else {
           curl_off_t total_time;
           curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME_T, & total_time);
@@ -47,10 +54,14 @@ int send_discharge_email(const char * file_name,
         }
       } else {
         puts("Send mail failed");
+        curl_slist_free_all(recipients);
+        curl_slist_free_all(headers);
+        curl_mime_free(mime);
+        curl_easy_cleanup(curl);
         return 0;
       }
       curl_slist_free_all(recipients);
-      curl_slist_free_all(header);
+      curl_slist_free_all(headers);
       curl_mime_free(mime);
       curl_easy_cleanup(curl);
       return 1;
