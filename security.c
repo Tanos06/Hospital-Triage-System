@@ -3,45 +3,73 @@
 #include <string.h>
 #include <ctype.h>
 
-/*COME FUNZIONA IL CIFRARIO DI VIGENèRE:Sposta tutte le lettere dello stesso numero di posizione
-ma la chiave di spostamento cambia per ogni singola lettera del testo, basandosi su una parola chiave
-in questo caso (MEDICINA).
-Esempio:
-Parola da cifrare: paziente. chiave:XYZ
-La P verrà spostata usando il valore della X
-LA A verrà spostata usando il valore della Y
-Stessa cosa per la Z. Quando si arriva alla fine della chiave, si ricomincia di nuovo.
-PS:Questo algoritmo non considera i segni di punteggiatura e caratteri speciali.*/
+/**
+ * @file security.c
+ * @brief Implementazione del cifrario di Vigenère.
+ *
+ * COME FUNZIONA IL CIFRARIO DI VIGENÈRE:
+ * Sposta tutte le lettere dello stesso numero di posizione,
+ * ma la chiave di spostamento cambia per ogni singola lettera
+ * del testo, basandosi su una parola chiave (es. MEDICINA).
+ *
+ * Esempio: Parola da cifrare: "paziente", chiave: "XYZ"
+ * - La 'P' viene spostata usando il valore della 'X'
+ * - La 'A' viene spostata usando il valore della 'Y'
+ * - Quando si arriva alla fine della chiave, si ricomincia.
+ *
+ * Nota: l'algoritmo non considera segni di punteggiatura
+ * e caratteri speciali.
+ */
 
-void encrypt_vigenere(char *text,char *key){
-    int i=0,j=0;
-    int key_len=strlen(key);
-    while(text[i]!='\0'){
-        if(isalpha(text[i])){
-            int temp_key=toupper(key[j])-'A'; //per creare la chiave temporanea sottraiamo il valore di 'A' dal valore della chiave corrente per ottenere il suo valore numerico (0-25)
-            if(isupper(text[i])){//controlliamo se le lettere sono maiuscole o minuscole prorprio come nel cifrario di cesare per non rompere la tabella ASCII
-                text[i]=((text[i]-'A'+temp_key)%26)+'A';
-            }else if(islower(text[i])){
-                text[i]=((text[i]-'a'+temp_key)%26)+'a';
+/**
+ * @brief Cifra una stringa di testo con il cifrario di Vigenère.
+ *
+ * @param[in,out] text Stringa da cifrare (modificata in-place).
+ * @param[in]     key  Chiave di cifratura.
+ *
+ * @pre  text e key devono essere stringhe terminate con '\0'.
+ * @post text contiene il testo cifrato.
+ */
+void encrypt_vigenere(char *text, char *key) {
+    int i = 0, j = 0;
+    int key_len = strlen(key);
+    while (text[i] != '\0') {
+        if (isalpha(text[i])) {
+            /* Valore numerico della chiave corrente (0-25) */
+            int temp_key = toupper(key[j]) - 'A';
+            if (isupper(text[i])) {
+                text[i] = ((text[i] - 'A' + temp_key) % 26) + 'A';
+            } else if (islower(text[i])) {
+                text[i] = ((text[i] - 'a' + temp_key) % 26) + 'a';
             }
-            j=(j+1)%key_len;
+            j = (j + 1) % key_len;
         }
         i++;
     }
 }
 
-void decrypt_vigenere(char *text,char *key){
-    int i=0,j=0;
-    int key_len=strlen(key);
-    while(text[i]!='\0'){
-        if(isalpha(text[i])){
-            int temp_key=toupper(key[j])-'A';
-            if(isupper(text[i])){
-                text[i]=(((text[i]-'A'-temp_key)+26)%26)+'A'; //Qui l'unica differenza dalla crittografia è che al posto di sommare A lo sottraiamo
-            }else if(islower(text[i])){
-                text[i]=(((text[i]-'a'-temp_key)+26)%26)+'a';
+/**
+ * @brief Decifra una stringa cifrata con il cifrario di Vigenère.
+ *
+ * @param[in,out] text Stringa cifrata (modificata in-place).
+ * @param[in]     key  Chiave di decifratura.
+ *
+ * @pre  text e key devono essere stringhe terminate con '\0'.
+ * @post text contiene il testo in chiaro.
+ */
+void decrypt_vigenere(char *text, char *key) {
+    int i = 0, j = 0;
+    int key_len = strlen(key);
+    while (text[i] != '\0') {
+        if (isalpha(text[i])) {
+            int temp_key = toupper(key[j]) - 'A';
+            if (isupper(text[i])) {
+                /* Sottrazione con correzione +26 per evitare valori negativi */
+                text[i] = (((text[i] - 'A' - temp_key) + 26) % 26) + 'A';
+            } else if (islower(text[i])) {
+                text[i] = (((text[i] - 'a' - temp_key) + 26) % 26) + 'a';
             }
-            j=(j+1)%key_len;
+            j = (j + 1) % key_len;
         }
         i++;
     }

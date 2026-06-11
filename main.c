@@ -8,6 +8,8 @@
 #include "security.h"
 #include "departments.h"
 #include "mail.h"
+#include "archive.h"
+#include "triage.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,6 +49,9 @@ int main() {
     int loaded;
 	init_departments();
 
+	initArchive(); //inizializza l'albero binario
+	triageQueue waitingQueue=initQueue();//Crea la coda di priorità
+
 	InitWindow(screenWidth, screenHeight, "Pronto Soccorso - Triage & Chat");
 	SetTargetFPS(60);
 	GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
@@ -62,8 +67,8 @@ int main() {
 	bool surnameEditMode = false;
 	char taxCodeInput[17] = "";
 	bool taxCodeEditMode = false;
-	char priorityInput[10] = "";
-	bool priorityEditMode = false;
+	char triageInput[10] = "";
+	bool triageEditMode = false;
 	char deptInput[10]="";
 	bool deptEditMode=false;
 
@@ -197,7 +202,7 @@ int main() {
 			DrawText("Priorità (1 a 5):", 50, 265, 20, DARKGRAY);
 			if (GuiTextBox((Rectangle) {
 			250, 260, 300, 40
-		}, priorityInput, 5, priorityEditMode)) priorityEditMode = !priorityEditMode;
+		}, triageInput, 5, triageEditMode)) triageEditMode = !triageEditMode;
             DrawText("Reparto (1 a 5):", 50, 325, 20, DARKGRAY);
             if (GuiTextBox((Rectangle) {
 			250, 320, 300, 40
@@ -214,8 +219,8 @@ int main() {
 					strcpy(newPatient.name,nameInput);
 					strcpy(newPatient.surname,surnameInput);
 					strcpy(newPatient.taxCode,taxCodeInput);
-					int priority=atoi(priorityInput);
-					newPatient.priority=priority;
+					int triage=atoi(triageInput);
+					newPatient.triage=triage;
 					time_t rawtime;
 					time(&rawtime);//ottiene il tempo attuale in secondi
 					struct tm *timeinfo=localtime(&rawtime);//lo converte nel formato locale
@@ -223,6 +228,8 @@ int main() {
 					int deptId=atoi(deptInput);
 					newPatient.assignedDeptId=deptId;
 					save_patient(&newPatient);
+					enqueuetriage(waitingQueue,newPatient); //mette in coda in base alle priorità
+					insertPatient(newPatient);//Salva nell'albero binario storico
 				}
 			}
 
@@ -239,11 +246,18 @@ int main() {
 				nameInput[0] = '\0';
 				surnameInput[0] = '\0';
 				taxCodeInput[0] = '\0';
-				priorityInput[0] = '\0';
+				triageInput[0] = '\0';
 			}
 		}
 		else if (appState == 4) {
 			DrawText("AREA MEDICO - DIMISSIONE E REFERTO", 10, 10, 20, DARKBLUE);
+			if(GuiButton((Rectangle){500,80,250,50},"CHIAMA PROSSIMO")){
+                if(!isEmptyQueue(waitingQueue)){
+                    Patient nextPatient=dequeue(waitingQueue);
+                    strcpy(refName,nextPatient.name);
+                    strcpy(refSurname,nextPatient.surname);
+                }
+			}
 
 			DrawText("Nome:", 50, 85, 20, DARKGRAY);
 			if (GuiTextBox((Rectangle) {
@@ -334,6 +348,6 @@ int main() {
 
 	close_listen_socket();
 	CloseWindow();
-
+	destroyQueue(waitingQueue); //Libera la memoria della coda prima di uscire
 	return 0;
 }
