@@ -109,3 +109,31 @@ int save_patient(Patient *newPatient) {
     }
     return 0;
 }
+
+/**
+ * @brief Implementazione del sistema di programmazione difensiva.
+ */
+bool validate_input_patient(const char* name, const char* surname, const char* taxCode, const char* triage, const char* deptId) {
+    if(strlen(name) == 0 || strlen(surname) == 0 || strlen(taxCode) == 0 || strlen(triage) == 0 || strlen(deptId) == 0) return false;
+
+    int t = atoi(triage);
+    if(t < 1 || t > 5) return false;
+
+    int d = atoi(deptId);
+    if(d < 1 || d > 5) return false;
+
+    return true;
+}
+
+/**
+ * @brief Recupera tutti i file binari AD in memoria sequenziale.
+ */
+int load_all_patients(Patient* patientArray, int max_patients) {
+    FILE* file = fopen("pazienti.dat", "rb");
+    if(file == NULL) {
+        return 0;
+    }
+    int count = fread(patientArray, sizeof(Patient), max_patients, file);
+    fclose(file);
+    return count;
+}

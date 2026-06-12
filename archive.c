@@ -16,7 +16,7 @@ typedef struct treeNode {
     struct treeNode* left;     /**< Puntatore al figlio sinistro. */
     struct treeNode* right;    /**< Puntatore al figlio destro. */
 
-} TreeNode;
+} treeNode;
 
 /**
  * @brief Radice dell'archivio BST.
@@ -24,7 +24,7 @@ typedef struct treeNode {
  * Variabile privata del modulo. Rappresenta il punto
  * di accesso all'intero albero binario di ricerca.
  */
-static TreeNode* root;
+static treeNode* root;
 
 /**
  * @brief Inizializza l'archivio dei pazienti.
@@ -50,13 +50,13 @@ void initArchive() {
  * @post Il paziente viene inserito nel corretto sottoalbero,
  *       se non è già presente.
  */
-static TreeNode* insertRecursive(TreeNode* node,
+static treeNode* insertRecursive(treeNode* node,
                                  Patient p) {
 
     if(node == NULL) {
 
-        TreeNode* newNode =
-            malloc(sizeof(TreeNode));
+        treeNode* newNode =
+            malloc(sizeof(treeNode));
 
         if(newNode != NULL) {
 
@@ -79,9 +79,7 @@ static TreeNode* insertRecursive(TreeNode* node,
 
     }
     else {
-
-        printf("Paziente gia' presente in archivio.\n");
-
+        //printf("Paziente gia' presente in archivio.\n");
     }
 
     return node;
@@ -97,9 +95,7 @@ static TreeNode* insertRecursive(TreeNode* node,
  *       se non era già presente.
  */
 void insertPatient(Patient p) {
-
     root = insertRecursive(root, p);
-
 }
 
 /**
@@ -113,7 +109,7 @@ void insertPatient(Patient p) {
  * @pre taxCode deve essere una stringa valida.
  * @post L'albero non viene modificato.
  */
-static TreeNode* searchRecursive(TreeNode* node,
+static treeNode* searchRecursive(treeNode* node,
                                  char taxCode[]) {
 
     if(node == NULL) {
@@ -144,7 +140,7 @@ static TreeNode* searchRecursive(TreeNode* node,
  */
 Patient* searchPatient(char taxCode[]) {
 
-    TreeNode* found =
+    treeNode* found =
         searchRecursive(root, taxCode);
 
     if(found != NULL) {
@@ -163,7 +159,7 @@ Patient* searchPatient(char taxCode[]) {
  * @post I pazienti del sottoalbero vengono stampati
  *       in ordine crescente di codice fiscale.
  */
-static void inorderRecursive(TreeNode* node) {
+static void inorderRecursive(treeNode* node) {
 
     if(node != NULL) {
 
@@ -195,4 +191,17 @@ void inorder() {
 
     inorderRecursive(root);
 
+}
+
+static void destroyRecursive(treeNode* node){
+    if(node!=NULL){
+        destroyRecursive(node->left);
+        destroyRecursive(node->right);
+        free(node);
+    }
+}
+
+void destroyArchive(){
+    destroyRecursive(root);
+    root=NULL;
 }
