@@ -15,20 +15,19 @@
 /**
  * @brief Invia il referto di dimissione via email al paziente.
  *
- * Apre il file di testo indicato e lo allega ad un'email
- * spedita tramite SMTPS (smtp.gmail.com:465) all'indirizzo
- * del paziente. Il corpo del messaggio è un testo fisso di
- * notifica.
+ * Crea o sovrascrive un file di testo contenente il referto
+ * e lo allega ad un'email spedita tramite SMTPS (smtp.gmail.com:465).
  *
- * @param[in] file_name     Percorso del file .txt del referto da allegare.
- * @param[in] patient_email Indirizzo email del destinatario.
+ * @param[in] patient_email   Indirizzo email del destinatario.
+ * @param[in] patient_name    Nome del paziente dimesso.
+ * @param[in] patient_surname Cognome del paziente dimesso.
+ * @param[in] diagnosis       Stringa testuale con diagnosi e cure.
  *
- * @return 1 in caso di invio riuscito, 0 in caso di errore.
+ * @return 1 in caso di invio riuscito, 0 in caso di errore logico o di rete.
  *
- * @pre file_name deve essere un percorso valido di un file esistente.
- * @pre patient_email deve essere un indirizzo email valido.
+ * @pre I parametri di testo non devono essere stringhe vuote.
  * @post L'email con il referto allegato è recapitata al paziente.
  */
-int send_discharge_email(const char *file_name, const char *patient_email);
+int send_discharge_email(const char *patient_email, const char* patient_name, const char* patient_surname, const char* diagnosis);
 
 #endif // MAIL_H_INCLUDED

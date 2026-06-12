@@ -1,6 +1,7 @@
 #ifndef ARCHIVE_H_INCLUDED
 #define ARCHIVE_H_INCLUDED
 
+#include <stdbool.h>
 #include "triage.h"
 
 /**
@@ -29,6 +30,8 @@ void insertPatient(Patient p);
  * mediante visita inorder.
  */
 void inorder();
+
+void destroyArchive();
 
 /**
  * @brief Ricerca un paziente tramite codice fiscale.
