@@ -20,6 +20,7 @@
 #include "mail.h"
 #include "archive.h"
 #include "triage.h"
+#include "defensive.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -70,7 +71,6 @@ void __imp__wassert(const wchar_t* _Message, const wchar_t* _File, unsigned _Lin
 int main() {
     const int screenWidth = 800;
     const int screenHeight = 600;
-    Department departmentsList[MAX_DEPARTMENTS];
     int loaded;
 
     /* Inizializzazione moduli e strutture dati */
@@ -245,7 +245,7 @@ int main() {
 
             if (GuiButton((Rectangle){ 250, 380, 300, 50 }, "SALVA PAZIENTE")) {
                 int totalPatient = get_total_patient();
-
+                int patientDepartments=atoi(deptInput)-1;
                 /* Programmazione difensiva e controlli */
                 if(validate_input_patient(nameInput, surnameInput, taxCodeInput, triageInput, deptInput) == false){
                     showValidationError = true;
@@ -259,36 +259,33 @@ int main() {
                     showPatientAlreadyPresent = true;
                     showMaxPatientsError = false;
                     showValidationError = false;
-                } else {
+                } else if(get_department_bedsOccupied(patientDepartments)>=20){
+                    showMaxPatientsError=true;
+                    showValidationError=false;
+                    showPatientAlreadyPresent=false;
+                }else{
                     /* Dati validi: Costruzione e salvataggio */
                     showValidationError = false;
                     showMaxPatientsError = false;
                     showPatientAlreadyPresent = false;
-                    Patient newPatient;
-                    strcpy(newPatient.name, nameInput);
-                    strcpy(newPatient.surname, surnameInput);
-                    strcpy(newPatient.taxCode, taxCodeInput);
-                    int triage = atoi(triageInput);
-                    newPatient.triage = triage;
-
+                    int triageInt=atoi(triageInput);
+                    int deptId=atoi(deptInput);
                     time_t rawtime;
                     time(&rawtime); // ottiene il tempo attuale in secondi
                     struct tm *timeinfo = localtime(&rawtime); // lo converte nel formato locale
-                    sprintf(newPatient.checkinTime, "%02d:%02d", timeinfo->tm_hour, timeinfo->tm_min);
-
-                    int deptId = atoi(deptInput);
-                    newPatient.assignedDeptId = deptId;
-
-                    /* Distribuzione logica ai vari ADT */
-                    save_patient(&newPatient);
-                    enqueuetriage(waitingQueue, newPatient); // mette in coda in base alle priorità
-                    insertPatient(newPatient);
+                    char checkinTime[6];
+                    sprintf(checkinTime, "%02d:%02d", timeinfo->tm_hour, timeinfo->tm_min);
+                    Patient *newPatient=create_patient(nameInput,surnameInput,taxCodeInput,triageInt,deptId,checkinTime);
+                    save_patient(newPatient);
+                    enqueuetriage(waitingQueue, *newPatient); // mette in coda in base alle priorità
+                    insertPatient(*newPatient);
+                    destroy_patient(newPatient);
                 }
             }
 
             /* Stampe messaggi di errore (Difensiva) */
             if (showMaxPatientsError) {
-                DrawText("ERRORE: Limite massimo di 100 pazienti raggiunto!", 150, 400, 20, RED);
+                DrawText("ERRORE: Limite massimo di pazienti raggiunto!", 150, 400, 20, RED);
             }
             if(showValidationError){
                 DrawText("ERRORE: Campi inserita in maniera errata!", 150, 460, 20, RED);
@@ -318,8 +315,8 @@ int main() {
             if(GuiButton((Rectangle){ 500, 80, 250, 50 }, "CHIAMA PROSSIMO")){
                 if(!isEmptyQueue(waitingQueue)){
                     Patient nextPatient = dequeue(waitingQueue);
-                    strcpy(refName, nextPatient.name);
-                    strcpy(refSurname, nextPatient.surname);
+                    strcpy(refName, patient_get_name(&nextPatient));
+                    strcpy(refSurname, patient_get_surname(&nextPatient));
                 }
             }
 
@@ -355,29 +352,30 @@ int main() {
             if(showEmailError){
                 DrawText("Errore durante l'invio del referto!", 200, 370, 20, RED);
             }
-        } /* <--- FINE DELLO STATO 4 */
-        if (GuiButton((Rectangle){ 10, 540, 150, 40 }, "INDIETRO")) {
+            if (GuiButton((Rectangle){ 10, 540, 150, 40 }, "INDIETRO")) {
             showEmailError = false;
             showEmailSuccess = false;
             appState = 0;
-        }
+            }
+        }/* <--- FINE DELLO STATO 4 */
 
         /* ==========================================
          * STATO 5: VISUALIZZA REPARTI
          * ========================================== */
         else if (appState == 5) {
             DrawText("ELENCO REPARTI E DISPONIBILITA' LETTI", 10, 10, 20, DARKBLUE);
-            loaded = load_departments(departmentsList, MAX_DEPARTMENTS);
+            loaded = load_departments(MAX_DEPARTMENTS);
             for (int i = 0; i < loaded; i++) {
                 char deptInfo[200];
                 sprintf(deptInfo, "%d. %s - Letti Occupati: %d su %d",
-                        departmentsList[i].departmentId,
-                        departmentsList[i].departmentName,
-                        departmentsList[i].bedsOccupied,
-                        departmentsList[i].totalBeds);
+                        get_department_id(i),
+                        get_department_name(i),
+                        get_department_bedsOccupied(i),
+                        get_department_totalBeds(i)
+                        );
 
                 Color textColor = DARKGRAY;
-                if (departmentsList[i].bedsOccupied >= departmentsList[i].totalBeds) {
+                if (get_department_bedsOccupied(i)>=get_department_totalBeds(i)) {
                     strcat(deptInfo, "  [ REPARTO PIENO ]");
                     textColor = RED;
                 } else {

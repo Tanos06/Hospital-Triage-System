@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <curl/curl.h>
+#include<time.h>
+#include "defensive.h"
 
 /**
  * @file mail.c
@@ -16,23 +18,13 @@
 #define EMAIL "gaetanobona84@gmail.com"
 
 /** @brief App-password Gmail per l'autenticazione SMTP. */
-#define PASSWORD "<password>"
+#define PASSWORD "udsbmpdctmmoskdg"
 
 /** @brief Oggetto dell'email di dimissione. */
 #define SUBJECT "Referto Dimissioni"
 
-/**
- * @brief Controllo difensivo preliminare per il referto.
- * * @param[in] patient_email   Mail del paziente.
- * @param[in] patient_name    Nome del paziente.
- * @param[in] patient_surname Cognome del paziente.
- * @param[in] diagnosis       Diagnosi da refertare.
- * * @return true se tutti i dati sono presenti, false in presenza di stringhe vuote.
- */
-static bool validate_parameters(const char* patient_email, const char* patient_name, const char* patient_surname, const char* diagnosis){
-    if(strlen(patient_email) == 0 || strlen(patient_name) == 0 || strlen(patient_surname) == 0 || strlen(diagnosis) == 0) return false;
-    return true;
-}
+static char lastReportFilename[100]="";
+static int emailSentCount=0;
 
 /**
  * @brief Invia il referto di dimissione via email al paziente.
@@ -114,10 +106,12 @@ int send_discharge_email(const char *patient_email, const char* patient_name, co
                 } else {
                     curl_off_t total_time;
                     curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME_T, &total_time);
+                    strcpy(lastReportFilename,filename);
+                    emailSentCount++;
                     printf("Mailer response code %ld OK Transfert in %.3f s\n", response_code, total_time / 1000000.0);
                 }
             } else {
-                puts("Send mail failed");
+                fprintf(stderr,"Send mail failed: %s\n",curl_easy_strerror(ret_curl));
                 curl_slist_free_all(recipients);
                 curl_slist_free_all(headers);
                 curl_mime_free(mime);

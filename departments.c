@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "departments.h"
+#include "patient.h"
 
 /**
  * @file departments.c
@@ -11,6 +13,20 @@
  * - "pazienti.dat": registro dei pazienti accettati.
  */
 
+
+
+/**
+ * @brief Rappresenta un reparto ospedaliero con la disponibilità dei letti.
+ */
+typedef struct {
+    int departmentId;        /**< Identificativo univoco del reparto. */
+    char departmentName[21]; /**< Nome del reparto. */
+    int totalBeds;           /**< Numero totale di letti nel reparto. */
+    int bedsOccupied;        /**< Numero di letti attualmente occupati. */
+} Department;
+
+static Department deptState[10];
+static int deptCount=0;
 /**
  * @brief Inizializza il file dei reparti se non esiste.
  *
@@ -27,7 +43,7 @@ void init_departments() {
             {2, "Chirurgia Generale", 20, 0},
             {3, "Ortopedia", 20, 0},
             {4, "Pediatria", 20, 0},
-            {5, "Terapia Intensiva", 20, 0}
+            {5, "Terapia Intensiva", 20, 0},
         };
         FILE *newFile = fopen("reparti.dat", "wb");
         if (newFile != NULL) {
@@ -42,12 +58,12 @@ void init_departments() {
 /**
  * @brief Carica i reparti dal file ad accesso diretto in memoria.
  */
-int load_departments(Department *dept_array, int max_departments) {
+int load_departments(int max_departments) {
     FILE *file = fopen("reparti.dat", "rb");
     if (file == NULL) {
         return 0;
     }
-    int count = fread(dept_array, sizeof(Department), max_departments, file);
+    int count = fread(deptState, sizeof(Department), max_departments, file);
     fclose(file);
     return count;
 }
@@ -110,20 +126,7 @@ int save_patient(Patient *newPatient) {
     return 0;
 }
 
-/**
- * @brief Implementazione del sistema di programmazione difensiva.
- */
-bool validate_input_patient(const char* name, const char* surname, const char* taxCode, const char* triage, const char* deptId) {
-    if(strlen(name) == 0 || strlen(surname) == 0 || strlen(taxCode) == 0 || strlen(triage) == 0 || strlen(deptId) == 0) return false;
 
-    int t = atoi(triage);
-    if(t < 1 || t > 5) return false;
-
-    int d = atoi(deptId);
-    if(d < 1 || d > 5) return false;
-
-    return true;
-}
 
 /**
  * @brief Recupera tutti i file binari AD in memoria sequenziale.
@@ -136,4 +139,42 @@ int load_all_patients(Patient* patientArray, int max_patients) {
     int count = fread(patientArray, sizeof(Patient), max_patients, file);
     fclose(file);
     return count;
+}
+
+Patient *create_patient(const char* name, const char* surname,const char* taxCode, int triage,int assignedDeptId, const char* checkinTime){
+    Patient *patient=(malloc(sizeof(Patient)));
+    if(patient==NULL){return NULL;}
+    strcpy(patient->name,name);
+    strcpy(patient->surname,surname);
+    strcpy(patient->taxCode,taxCode);
+    patient->triage=triage;
+    patient->assignedDeptId=assignedDeptId;
+    strcpy(patient->checkinTime,checkinTime);
+    return patient;
+}
+
+void destroy_patient(Patient *p){
+    free(p);
+}
+
+int get_loaded_count(){
+    return deptCount;
+}
+int get_department_id(int i){
+    return deptState[i].departmentId;
+}
+const char* get_department_name(int i){
+    return deptState[i].departmentName;
+}
+const char* patient_get_name(Patient *p){
+    return p->name;
+}
+const char* patient_get_surname(Patient*p){
+    return p->surname;
+}
+int get_department_totalBeds(int i){
+    return deptState[i].totalBeds;
+}
+int get_department_bedsOccupied(int i){
+    return deptState[i].bedsOccupied;
 }

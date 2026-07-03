@@ -1,7 +1,7 @@
 #ifndef TRIAGE_H_INCLUDED
 #define TRIAGE_H_INCLUDED
+#include "patient.h"
 
-#include "departments.h"
 
 /**
  * @file triage.h
@@ -40,8 +40,7 @@ int isEmptyQueue(triageQueue q);
  * @param[in,out] q Coda da modificare.
  * @param[in] p Paziente da inserire.
  */
-void enqueuetriage(triageQueue q,
-                     Patient p);
+void enqueuetriage(triageQueue q,Patient p);
 
 /**
  * @brief Estrae il paziente in testa alla coda.
