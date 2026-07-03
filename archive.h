@@ -10,7 +10,7 @@
  *
  * Il modulo fornisce le operazioni di inizializzazione,
  * inserimento, ricerca e visualizzazione dei pazienti
- * memorizzati nell'archivio.
+ * memorizzati nell'archivio (BST).
  */
 
 /**
@@ -31,6 +31,9 @@ void insertPatient(Patient p);
  */
 void inorder();
 
+/**
+ * @brief Dealloca in modo sicuro l'intero archivio (BST) dalla memoria.
+ */
 void destroyArchive();
 
 /**
