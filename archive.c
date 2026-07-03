@@ -193,6 +193,11 @@ void inorder() {
 
 }
 
+/**
+ * @brief Funzione ricorsiva di supporto per la deallocazione dei nodi dell'albero.
+ *
+ * @param[in,out] node Radice del sottoalbero corrente da deallocare.
+ */
 static void destroyRecursive(treeNode* node){
     if(node!=NULL){
         destroyRecursive(node->left);
@@ -201,6 +206,9 @@ static void destroyRecursive(treeNode* node){
     }
 }
 
+/**
+ * @brief Libera la memoria allocata dinamicamente per l'albero e resetta la radice.
+ */
 void destroyArchive(){
     destroyRecursive(root);
     root=NULL;

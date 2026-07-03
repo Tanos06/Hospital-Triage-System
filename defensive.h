@@ -3,6 +3,20 @@
 #include<stdbool.h>
 #include<string.h>
 
+/**
+ * @file defensive.h
+ * @brief Modulo per la validazione degli input e programmazione difensiva.
+ */
+
+/**
+ * @brief Valida i parametri necessari per l'invio dell'email di dimissione.
+ * * Controlla che le stringhe fornite in input non siano vuote.
+ * * @param[in] patient_email   Email del paziente.
+ * @param[in] patient_name    Nome del paziente.
+ * @param[in] patient_surname Cognome del paziente.
+ * @param[in] diagnosis       Diagnosi refertata.
+ * * @return true se tutti i parametri sono validi, false se almeno uno è vuoto.
+ */
 bool validate_parameters(const char* patient_email, const char* patient_name, const char* patient_surname, const char* diagnosis);
 
 /**
