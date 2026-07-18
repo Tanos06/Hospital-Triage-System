@@ -2,7 +2,7 @@
 #define ARCHIVE_H_INCLUDED
 
 #include <stdbool.h>
-#include "triage.h"
+#include "patient.h"
 
 /**
  * @file archive.h
@@ -44,6 +44,6 @@ void destroyArchive();
  * @return Puntatore al paziente trovato oppure NULL
  * se il paziente non è presente nell'archivio.
  */
-Patient* searchPatient(char taxCode[]);
+Patient searchPatient(const char* taxCode);
 
 #endif // ARCHIVE_H_INCLUDED

@@ -37,8 +37,7 @@ struct triageQueue {
  */
 triageQueue initQueue() {
 
-    triageQueue q =
-        malloc(sizeof(struct triageQueue));
+    triageQueue q = malloc(sizeof(struct triageQueue));
 
     if(q != NULL) {
 
@@ -95,20 +94,15 @@ void enqueuetriage(triageQueue q,
 
     newNode->data = p;
 
-    if(q->head == NULL ||
-       p.triage < q->head->data.triage) {
-
+    if(q->head == NULL ||getTriage(p) < getTriage(q->head->data)) {
         newNode->next = q->head;
         q->head = newNode;
-
         return;
     }
 
     QueueNode* temp = q->head;
 
-    while(temp->next != NULL &&
-          temp->next->data.triage <= p.triage) {
-
+    while(temp->next != NULL && getTriage(temp->next->data)<=getTriage(p)) {
         temp = temp->next;
     }
 
@@ -129,16 +123,14 @@ void enqueuetriage(triageQueue q,
  */
 Patient dequeue(triageQueue q) {
 
-    Patient p = {0};
+    Patient p = NULL;
 
     if(q == NULL || q->head == NULL) {
-
         printf("Coda vuota.\n");
         return p;
     }
 
     QueueNode* temp = q->head;
-
     p = temp->data;
     q->head = temp->next;
 
@@ -167,12 +159,11 @@ void printQueue(triageQueue q) {
 
     while(temp != NULL) {
 
-        printf("Nome: %s\n", temp->data.name);
-        printf("Cognome: %s\n", temp->data.surname);
-        printf("Codice fiscale: %s\n", temp->data.taxCode);
-        printf("Priorita': %d\n", temp->data.triage);
+        printf("Nome: %s\n", getName(temp->data));
+        printf("Cognome: %s\n", getSurname(temp->data));
+        printf("Codice fiscale: %s\n", getTaxCode(temp->data));
+        printf("Priorita': %d\n", getTriage(temp->data));
         printf("\n");
-
         temp = temp->next;
     }
 }
