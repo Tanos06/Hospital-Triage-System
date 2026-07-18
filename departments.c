@@ -60,7 +60,7 @@ void init_departments() {
  */
 int load_departments(int max_departments) {
     FILE *file = fopen("reparti.dat", "rb");
-    if (file == NULL) {
+    if (!validate_file_open(file)) {
         return 0;
     }
     int count = fread(deptState, sizeof(Department), max_departments, file);
@@ -80,7 +80,8 @@ int get_total_patient() {
         long position = 0;
         fseek(patientFile, 0, SEEK_END);
         position = ftell(patientFile);
-        int totalPatient = position / sizeof(Patient);
+        fclose(patientFile);
+        int totalPatient=position/patient_record_size();
         return totalPatient;
     }
     return 0;
@@ -94,11 +95,11 @@ int get_total_patient() {
  * per accedere direttamente al record del reparto corretto,
  * incrementando il contatore dei letti occupati.
  */
-int save_patient(Patient *newPatient) {
+int save_patient(Patient newPatient) {
     FILE *patientFile = fopen("pazienti.dat", "ab");
     if (patientFile != NULL) {
         /* newPatient è già un puntatore, non serve & */
-        if (fwrite(newPatient, sizeof(Patient), 1, patientFile) == 0) {
+        if (!patient_write_to_file(newPatient,patientFile)) {
             fclose(patientFile);
             return 0;
         }
@@ -110,11 +111,12 @@ int save_patient(Patient *newPatient) {
     FILE *departmentFile = fopen("reparti.dat", "r+b");
     if (departmentFile != NULL) {
         Department departmentTemp;
-        fseek(departmentFile, (newPatient->assignedDeptId - 1) * sizeof(Department), SEEK_SET);
-        fread(&departmentTemp, sizeof(Department), 1, departmentFile);
-        departmentTemp.bedsOccupied = departmentTemp.bedsOccupied + 1;
-        fseek(departmentFile, (newPatient->assignedDeptId - 1) * sizeof(Department), SEEK_SET);
-        if (fwrite(&departmentTemp, sizeof(Department), 1, departmentFile) == 0) {
+        int deptId=getAssignedDeptId(newPatient);
+        fseek(departmentFile,(deptId-1)*sizeof(Department),SEEK_SET);
+        fread(&departmentTemp,sizeof(Department),1,departmentFile);
+        departmentTemp.bedsOccupied=departmentTemp.bedsOccupied+1;
+        fseek(departmentFile,(deptId-1)*sizeof(Department),SEEK_SET);
+        if(fwrite(&departmentTemp,sizeof(Department),1,departmentFile)==0){
             fclose(departmentFile);
             return 0;
         }
@@ -136,26 +138,18 @@ int load_all_patients(Patient* patientArray, int max_patients) {
     if(file == NULL) {
         return 0;
     }
-    int count = fread(patientArray, sizeof(Patient), max_patients, file);
+    int count=0;
+    while(count<max_patients){
+        Patient p=patient_read_from_file(file);
+        if(p==NULL)break;
+        patientArray[count]=p;
+        count++;
+    }
     fclose(file);
     return count;
 }
 
-Patient *create_patient(const char* name, const char* surname,const char* taxCode, int triage,int assignedDeptId, const char* checkinTime){
-    Patient *patient=(malloc(sizeof(Patient)));
-    if(patient==NULL){return NULL;}
-    strcpy(patient->name,name);
-    strcpy(patient->surname,surname);
-    strcpy(patient->taxCode,taxCode);
-    patient->triage=triage;
-    patient->assignedDeptId=assignedDeptId;
-    strcpy(patient->checkinTime,checkinTime);
-    return patient;
-}
 
-void destroy_patient(Patient *p){
-    free(p);
-}
 
 int get_loaded_count(){
     return deptCount;
@@ -165,12 +159,6 @@ int get_department_id(int i){
 }
 const char* get_department_name(int i){
     return deptState[i].departmentName;
-}
-const char* patient_get_name(Patient *p){
-    return p->name;
-}
-const char* patient_get_surname(Patient*p){
-    return p->surname;
 }
 int get_department_totalBeds(int i){
     return deptState[i].totalBeds;

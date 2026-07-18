@@ -55,8 +55,7 @@ static treeNode* insertRecursive(treeNode* node,
 
     if(node == NULL) {
 
-        treeNode* newNode =
-            malloc(sizeof(treeNode));
+        treeNode* newNode = malloc(sizeof(treeNode));
 
         if(newNode != NULL) {
 
@@ -67,21 +66,12 @@ static treeNode* insertRecursive(treeNode* node,
 
         return newNode;
     }
-
-    if(strcmp(p.taxCode, node->data.taxCode) < 0) {
-
-        node->left = insertRecursive(node->left, p);
-
+    int cmp=strcmp(getTaxCode(p),getTaxCode(node->data));
+    if(cmp<0){
+        node->left=insertRecursive(node->left,p);
+    }else if(cmp>0){
+        node->right=insertRecursive(node->right,p);
     }
-    else if(strcmp(p.taxCode, node->data.taxCode) > 0) {
-
-        node->right = insertRecursive(node->right, p);
-
-    }
-    else {
-        //printf("Paziente gia' presente in archivio.\n");
-    }
-
     return node;
 }
 
@@ -109,22 +99,19 @@ void insertPatient(Patient p) {
  * @pre taxCode deve essere una stringa valida.
  * @post L'albero non viene modificato.
  */
-static treeNode* searchRecursive(treeNode* node,
-                                 char taxCode[]) {
+static treeNode* searchRecursive(treeNode* node,const char* taxCode) {
 
     if(node == NULL) {
         return NULL;
     }
-
-    if(strcmp(taxCode, node->data.taxCode) == 0) {
+    int cmp=strcmp(taxCode,getTaxCode(node->data));
+    if(cmp==0){
         return node;
     }
-
-    if(strcmp(taxCode, node->data.taxCode) < 0) {
-        return searchRecursive(node->left, taxCode);
-    }
-    else {
-        return searchRecursive(node->right, taxCode);
+    if(cmp<0){
+        return searchRecursive(node->left,taxCode);
+    }else{
+        return searchRecursive(node->right,taxCode);
     }
 }
 
@@ -138,13 +125,13 @@ static treeNode* searchRecursive(treeNode* node,
  * @pre taxCode deve essere una stringa valida.
  * @post L'archivio non viene modificato.
  */
-Patient* searchPatient(char taxCode[]) {
+Patient searchPatient(const char* taxCode) {
 
     treeNode* found =
         searchRecursive(root, taxCode);
 
     if(found != NULL) {
-        return &(found->data);
+        return found->data;
     }
 
     return NULL;
@@ -165,17 +152,13 @@ static void inorderRecursive(treeNode* node) {
 
         inorderRecursive(node->left);
 
-        printf("Codice fiscale: %s\n",
-               node->data.taxCode);
+        printf("Codice fiscale: %s\n",getTaxCode(node->data));
 
-        printf("Nome: %s\n",
-               node->data.name);
+        printf("Nome: %s\n",getName(node->data));
 
-        printf("Cognome: %s\n",
-               node->data.surname);
+        printf("Cognome: %s\n",getSurname(node->data));
 
-        printf("Priorita': %d\n\n",
-               node->data.triage);
+        printf("Priorita': %d\n\n",getTriage(node->data));
 
         inorderRecursive(node->right);
     }
@@ -202,6 +185,7 @@ static void destroyRecursive(treeNode* node){
     if(node!=NULL){
         destroyRecursive(node->left);
         destroyRecursive(node->right);
+        destroy_patient(node->data);
         free(node);
     }
 }

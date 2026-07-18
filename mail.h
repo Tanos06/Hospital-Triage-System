@@ -5,29 +5,25 @@
  * @file mail.h
  * @brief Modulo AD per l'invio automatizzato del referto di dimissione via email.
  *
- * Fornisce la funzione per l'apertura del referto sequenziale (.txt)
- * e il suo inoltro via protocollo SMTPS (Gmail) all'indirizzo
- * email del paziente al termine del trattamento in Pronto Soccorso.
- *
- * Dipendenza esterna: libcurl.
+ * Mantiene uno stato locale (ultimo referto generato, conteggio invii)
+ * aggiornato ad ogni invio riuscito.
  */
 
+int send_discharge_email(const char *patient_email, const char* patient_name,
+                         const char* patient_surname, const char* diagnosis);
+
 /**
- * @brief Invia il referto di dimissione via email al paziente.
+ * @brief Restituisce il numero totale di email inviate con successo.
  *
- * Crea o sovrascrive un file di testo contenente il referto
- * e lo allega ad un'email spedita tramite SMTPS (smtp.gmail.com:465).
- *
- * @param[in] patient_email   Indirizzo email del destinatario.
- * @param[in] patient_name    Nome del paziente dimesso.
- * @param[in] patient_surname Cognome del paziente dimesso.
- * @param[in] diagnosis       Stringa testuale con diagnosi e cure.
- *
- * @return 1 in caso di invio riuscito, 0 in caso di errore logico o di rete.
- *
- * @pre I parametri di testo non devono essere stringhe vuote.
- * @post L'email con il referto allegato è recapitata al paziente.
+ * @return Contatore delle email inviate dall'avvio del programma.
  */
-int send_discharge_email(const char *patient_email, const char* patient_name, const char* patient_surname, const char* diagnosis);
+int get_emails_sent_count();
+
+/**
+ * @brief Restituisce il nome dell'ultimo file di referto generato.
+ *
+ * @return Stringa con il nome dell'ultimo referto, vuota se nessuno inviato.
+ */
+const char* get_last_report_filename();
 
 #endif // MAIL_H_INCLUDED
